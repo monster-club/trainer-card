@@ -1,2 +1,2 @@
-# trainer-card
+# Trainer Card
 user information
