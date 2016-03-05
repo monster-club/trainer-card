@@ -1,8 +1,9 @@
 from bson.json_util import dumps
-from falcon import HTTP_201, HTTPBadRequest
+from falcon import HTTP_201, HTTPBadRequest, HTTPUnauthorized
 from json import loads
 from passlib.hash import bcrypt
 from util.Insert import insert_object
+from util.authorize import authorize_as
 
 
 class Base:
@@ -12,7 +13,8 @@ class Base:
                         'position', 'location_id']
 
   def on_get(self, req, resp):
-    resp.body = dumps(self.collection.find())
+    if authorize_as(req.auth, 'player'):
+      resp.body = dumps(self.collection.find())
 
   def on_post(self, req, resp):
     body = loads(req.stream.read().decode('utf-8'))
@@ -28,7 +30,7 @@ class Base:
     insert['stars'] = 0
     insert['money'] = 3000.0
     # TODO: get the level from the sign-up key
-    insert['level'] = 3
+    insert['level'] = 'player'
 
     insert = self.collection.insert_one(insert)
 
