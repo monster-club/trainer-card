@@ -1,5 +1,5 @@
 from bson.json_util import dumps
-from falcon import HTTP_201
+from falcon import HTTP_201, HTTPBadRequest
 from json import loads
 from passlib.hash import bcrypt
 from util.Insert import insert_object
@@ -17,6 +17,11 @@ class Base:
   def on_post(self, req, resp):
     body = loads(req.stream.read().decode('utf-8'))
     insert = insert_object(self.create_keys, body, True)
+
+    check_user = self.collection.find_one({'user_name': insert['user_name']})
+    if check_user != None:
+      raise HTTPBadRequest('User name is in use',
+                           'The username ' + insert['user_name'] + ' is in use')
 
     insert['password'] = bcrypt.encrypt(insert['password'])
     insert['score'] = 0
