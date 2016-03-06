@@ -1,5 +1,5 @@
 from bson.json_util import dumps
-from falcon import HTTPUnauthorized
+from falcon import HTTP_201, HTTPUnauthorized
 from json import loads
 from util.authorize import authorize_as
 from util.Insert import insert_object
