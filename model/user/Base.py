@@ -13,8 +13,10 @@ class Base:
                         'position', 'location_id']
 
   def on_get(self, req, resp):
-    if authorize_as(req.auth, 'player'):
+    if authorize_as(req.auth, 'developer'):
       resp.body = dumps(self.collection.find())
+    else:
+      raise HTTPUnauthorized('unautharized', 'unautharized')
 
   def on_post(self, req, resp):
     body = loads(req.stream.read().decode('utf-8'))
