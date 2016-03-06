@@ -8,7 +8,7 @@ from util.authorize import authorize_as
 class Single:
   def __init__(self, client):
     self.collection = client.trainer_card.token
-    self.update_keys = ['level', 'used']
+    self.update_keys = ['level', 'used', 'goodies']
 
   def on_put(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
@@ -27,7 +27,7 @@ class Single:
   def on_delete(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
       result = self.collection.delete_one({'_id': ObjectId(token_id)})
-      if result.delete_count == 1:
+      if result.deleted_count == 1:
         resp.status = HTTP_204
       else:
         raise HTTPBadRequest('failed to update resource',

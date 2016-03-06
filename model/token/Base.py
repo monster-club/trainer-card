@@ -9,7 +9,7 @@ from uuid import uuid4
 class Base:
   def __init__(self, client):
     self.collection = client.trainer_card.token
-    self.create_keys = ['level']
+    self.create_keys = ['level', 'goodies']
 
   def on_get(self, req, resp):
     if authorize_as(req.auth, 'developer'):
