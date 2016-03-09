@@ -1,6 +1,7 @@
 # Trainer Card
 [![GitHub tag](https://img.shields.io/github/tag/pokemon-club/trainer-card.svg?style=flat-square)]()
 [![Codacy](https://img.shields.io/codacy/1dd32d9e861047909d46c002116038d0.svg?style=flat-square)](https://www.codacy.com/app/scarecrow3322/trainer-card/dashboard)
+[![Requires.io](https://img.shields.io/requires/github/pokemon-club/trainer-card.svg?style=flat-square)](https://requires.io/github/pokemon-club/trainer-card/requirements/?branch=master)
 
 Get into the game
 
