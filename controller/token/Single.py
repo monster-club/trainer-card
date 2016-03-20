@@ -11,7 +11,7 @@ class Single:
   def on_put(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
       body = loads(req.stream.read().decode('utf-8'))
-      resource = self.model(body, token_id)
+      resource = self.model.update(body, token_id)
       if resource.modified_count == 1:
         resp.status = HTTP_204
       else:
@@ -22,7 +22,7 @@ class Single:
 
   def on_delete(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
-      result = self.model(token_id)
+      result = self.model.delete(token_id)
       if result.deleted_count == 1:
         resp.status = HTTP_204
       else:

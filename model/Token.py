@@ -26,7 +26,7 @@ class Token:
     keys = list(set(self.create_keys) | set(self.update_keys))
     insert = insert_object(keys, content)
     resource = self.collection.update_one({'_id': ObjectId(token_id)},
-                                          {'$set', insert})
+                                          {'$set': insert})
     return resource
 
   def delete(self, token_id):
