@@ -1,6 +1,6 @@
 from falcon import API
 from pymongo import MongoClient
-from model import token, user
+from controller import token, user
 from util.cors import pre_cors, post_cors
 
 client = MongoClient()
