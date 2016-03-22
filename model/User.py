@@ -39,7 +39,7 @@ class User:
 
     created = self.collection.insert_one(insert)
     new_user = self.find(created.inserted_id)
-    self.token.update(token['_id'], {'used': True})
+    self.token.update({'used': True}, token['_id'])
     new_user['goodies'] = token['goodies']
     return new_user
 
