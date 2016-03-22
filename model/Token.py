@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from util.Insert import insert_object
+from util.insert import insert_object
 from uuid import uuid4
 
 
