@@ -1,21 +1,17 @@
-from bson.objectid import ObjectId
 from falcon import HTTP_204, HTTPBadRequest, HTTPUnauthorized
+from model import Token
 from json import loads
-from util.Insert import insert_object
 from util.authorize import authorize_as
 
 
 class Single:
   def __init__(self, client):
-    self.collection = client.trainer_card.token
-    self.update_keys = ['level', 'used', 'goodies']
+    self.model = Token(client)
 
   def on_put(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
       body = loads(req.stream.read().decode('utf-8'))
-      insert = insert_object(self.update_keys, body)
-      resource = self.collection.update_one({'_id': ObjectId(token_id)},
-                                            {'$set': insert})
+      resource = self.model.update(body, token_id)
       if resource.modified_count == 1:
         resp.status = HTTP_204
       else:
@@ -26,7 +22,7 @@ class Single:
 
   def on_delete(self, req, resp, token_id):
     if authorize_as(req.auth, 'developer'):
-      result = self.collection.delete_one({'_id': ObjectId(token_id)})
+      result = self.model.delete(token_id)
       if result.deleted_count == 1:
         resp.status = HTTP_204
       else:
