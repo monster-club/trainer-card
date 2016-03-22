@@ -1,8 +1,7 @@
 from bson.json_util import dumps
-from falcon import HTTP_201, HTTPBadRequest, HTTPUnauthorized
-from json import loads
+from falcon import HTTP_201, HTTPUnauthorized
 from passlib.hash import bcrypt
-from util.authorize import authorize_as
+from util.authorize import authorize_as, authorize_body
 from model import User
 
 
@@ -17,14 +16,7 @@ class Base:
       raise HTTPUnauthorized('unautharized', 'unautharized')
 
   def on_post(self, req, resp):
-    body = self.__authorize_body(req)
+    body = authorize_body(req)
     new_user = self.model.create(body)
     resp.status = HTTP_201
     resp.body = dumps(new_user)
-
-  def __authorize_body(self, request):
-    body = loads(request.stream.read().decode('utf-8'))
-    if 'token' in body:
-      return body
-    else:
-      raise HTTPUnauthorized('unautharized', 'unautharized')
