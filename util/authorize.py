@@ -1,4 +1,5 @@
 from falcon import HTTPUnauthorized
+from json import loads
 from jwt import decode
 from os import environ
 
@@ -16,3 +17,11 @@ def authorize_as(header, needs_to_be):
 
   except:
     raise HTTPUnauthorized('unautharized', 'unautharized')
+
+def authorize_body(request):
+  body = loads(request.stream.read().decode('utf-8'))
+  if 'token' in body:
+    return body
+  else:
+    raise HTTPUnauthorized('unauthorized', 'unauthorized')
+  pass

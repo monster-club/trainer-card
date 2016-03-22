@@ -57,10 +57,7 @@ class User:
 
   def __user_name_used(self, name):
     check_user = self.collection.find_one({'user_name': name})
-    if check_user == None:
-      return True
-    else:
-      return False
+    return bool(check_user == None)
 
   def __check_token(self, token_key):
     token = self.token.find(token_key)
