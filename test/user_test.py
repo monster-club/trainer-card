@@ -1,6 +1,7 @@
 from falcon import HTTPBadRequest
 from pytest import yield_fixture
 from pymongo import MongoClient
+from pymongo.errors import WriteError
 from model import User, Token
 from passlib.hash import bcrypt
 from pytest import raises
@@ -36,34 +37,79 @@ def test_key_error_raised_without_token():
                  'position': 0, 'location_id': 0})
 
 def test_returns_false_with_bad_key():
-  new_user = user.create({'user_name': 'test user', 'password': 'wat',
-                          'position': 0, 'location_id': 0, 'token': 'junk'})
+  new_user = user.create(__user_insert('junk'))
   assert new_user == False
 
 def test_returns_false_if_name_in_use():
   # ensure the failure is not because of a missing token
-  resource = token.create({'level': 'developer', 'goodies': 1})
-  new_token = tokens.find_one({'_id': resource.inserted_id})
-
+  new_token = __test_token()
   collection.insert_one({'user_name': 'dummy'})
-  new_user = user.create({'user_name': 'dummy', 'password': 'wat',
-                          'position': 0, 'location_id': 0,
-                          'token': new_token['key']})
+  new_user = user.create(__user_insert(new_token['key']))
   assert new_user == False
 
 def test_raises_a_bad_request_if_key_is_missing():
-  resource = token.create({'level': 'developer', 'goodies': 1})
-  new_token = tokens.find_one({'_id': resource.inserted_id})
+  new_token = __test_token()
   with raises(HTTPBadRequest):
-    new_user = user.create({'user_name': 'dummy', 'password': 'wat',
-                            'position': 0, 'token': new_token['key']})
+    insert = __user_insert(new_token['key'])
+    insert.pop('location_id')
+    new_user = user.create(insert)
 
 def test_creates_a_user():
-  resource = token.create({'level': 'developer', 'goodies': 1})
-  new_token = tokens.find_one({'_id': resource.inserted_id})
-  new_user = user.create({'user_name': 'dummy', 'password': 'wat',
-                          'position': 0, 'location_id': 0,
-                          'token': new_token['key']})
+  new_token = __test_token()
+  new_user = user.create(__user_insert(new_token['key']))
   assert new_user['password'] == 'lololTotallySecureHash'
   assert new_user['level'] == new_token['level']
   assert new_user['money'] == 3000.0
+  assert new_user['stars'] == 0
+  assert new_user['score'] == 0
+
+def test_updates_a_user():
+  # no need to invoke a full integration
+  inserted = collection.insert_one({'user_name': 'Test', 'password': 'wat',
+                                    'position': 0, 'location_id': 0})
+  before = collection.find_one({'_id': inserted.inserted_id})
+  user.update({'position': 1}, str(inserted.inserted_id))
+  after = collection.find_one({'_id': inserted.inserted_id})
+  assert before['position'] == 0
+  assert after['position'] == 1
+
+def test_should_not_update_dev_keys_as_player():
+  # no need to invoke a full integration
+  inserted = collection.insert_one({'user_name': 'Test', 'password': 'wat',
+                                    'position': 0, 'location_id': 0,
+                                    'level': 'player'})
+  before = collection.find_one({'_id': inserted.inserted_id})
+  user.update({'level': 'developer', 'position': 1}, str(inserted.inserted_id))
+  after = collection.find_one({'_id': inserted.inserted_id})
+  assert before['level'] == 'player'
+  assert before['position'] == 0
+  assert after['level'] == 'player'
+  assert after['position'] == 1
+
+def test_should_throw_write_error_if_nothing_in_set():
+  # no need to invoke a full integration
+  inserted = collection.insert_one({'user_name': 'Test', 'password': 'wat',
+                                    'position': 0, 'location_id': 0,
+                                    'level': 'player'})
+  before = collection.find_one({'_id': inserted.inserted_id})
+  with raises(WriteError):
+    user.update({'level': 'developer'}, str(inserted.inserted_id))
+
+def test_should_be_able_to_update_dev_keys():
+  inserted = collection.insert_one({'user_name': 'Test', 'password': 'wat',
+                                    'position': 0, 'location_id': 0,
+                                    'level': 'player'})
+  before = collection.find_one({'_id': inserted.inserted_id})
+  user.update({'level': 'developer'}, str(inserted.inserted_id), True)
+  after = collection.find_one({'_id': inserted.inserted_id})
+  assert before['level'] == 'player'
+  assert after['level'] == 'developer'
+
+
+def __test_token():
+  resource = token.create({'level': 'developer', 'goodies': 1})
+  return tokens.find_one({'_id': resource.inserted_id})
+
+def __user_insert(token):
+  return {'user_name': 'dummy', 'password': 'wat', 'position': 0,
+          'location_id': 0, 'token': token}
