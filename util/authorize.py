@@ -24,4 +24,3 @@ def authorize_body(request):
     return body
   else:
     raise HTTPUnauthorized('unauthorized', 'unauthorized')
-  pass
