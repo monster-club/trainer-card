@@ -4,3 +4,4 @@ pyjwt == 1.4.0
 gunicorn == 19.4.5
 passlib == 1.6.5
 bcrypt == 2.0.0
+pytest == 2.9.1
