@@ -21,6 +21,9 @@ class User:
       user_id = ObjectId(user_id)
     return self.collection.find_one({'_id': user_id})
 
+  def find_by_name(self, user_name):
+    return self.collection.find_one({'user_name': user_name})
+
   def create(self, content):
     used = self.__user_name_used(content['user_name'])
     token = self.__check_token(content['token'])
@@ -65,4 +68,3 @@ class User:
       return False
     else:
       return token
-
