@@ -4,9 +4,9 @@ from model import Token
 
 
 class User:
-  def __init__(self, client, hash_method):
-    self.collection = client.trainer_card.user
-    self.token = Token(client)
+  def __init__(self, database, hash_method):
+    self.collection = database.user
+    self.token = Token(database)
     self.hash_method = hash_method
     self.create_keys = ['user_name', 'password', 'position', 'location_id']
     self.update_keys = ['password', 'score', 'stars', 'money',

@@ -6,8 +6,8 @@ from model import User
 
 
 class Base:
-  def __init__(self, client):
-    self.model = User(client, bcrypt)
+  def __init__(self, database):
+    self.model = User(database, bcrypt)
 
   def on_get(self, req, resp):
     if authorize_as(req.auth, 'developer'):
