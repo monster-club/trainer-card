@@ -4,8 +4,8 @@ from uuid import uuid4
 
 
 class Token:
-  def __init__(self, client):
-    self.collection = client.trainer_card.token
+  def __init__(self, database):
+    self.collection = database.token
     self.create_keys = ['level', 'goodies']
     self.update_keys = ['used']
 
