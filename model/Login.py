@@ -4,8 +4,8 @@ from os import environ
 
 
 class Login:
-  def __init__(self, client, hash_method):
-    self.user = User(client, hash_method)
+  def __init__(self, database, hash_method):
+    self.user = User(database, hash_method)
     self.hash_method = hash_method
 
   def validate(self, content, as_a = None):
