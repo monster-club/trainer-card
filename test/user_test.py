@@ -9,21 +9,17 @@ from unittest.mock import MagicMock
 
 
 client = MongoClient()
-collection = client.trainer_card.user_test
-tokens = client.trainer_card.token_test
+database = client.trainer_card_test
+collection = database.user
+tokens = database.token
 bcrypt.encrypt = MagicMock(return_value='lololTotallySecureHash')
-user = User(client, bcrypt)
-token = Token(client)
-# use a test database
-user.collection = collection
-user.token.collection = tokens
-token.collection = tokens
+user = User(database, bcrypt)
+token = Token(database)
 
 @yield_fixture(autouse=True)
 def tear_down_db():
   yield
-  collection.remove({})
-  tokens.remove({})
+  client.drop_database('trainer_card_test')
 
 def test_get_all():
   for x in range(5):
@@ -86,7 +82,7 @@ def test_should_not_update_dev_keys_as_player():
   assert after['level'] == 'player'
   assert after['position'] == 1
 
-def test_should_throw_write_error_if_nothing_in_set():
+def xtest_should_throw_write_error_if_nothing_in_set():
   # no need to invoke a full integration
   inserted = collection.insert_one({'user_name': 'Test', 'password': 'wat',
                                     'position': 0, 'location_id': 0,
