@@ -1,6 +1,6 @@
 from falcon import HTTPUnauthorized
 from json import loads
-from jwt import decode
+from jwt import decode, encode
 from os import environ
 
 
@@ -24,3 +24,11 @@ def authorize_body(request):
     return body
   else:
     raise HTTPUnauthorized('unauthorized', 'unauthorized')
+
+def sign_token(user_name, level):
+  token = {
+    'user_name': user_name,
+    'level': level
+  }
+  jwt_token = encode(token, environ['JWT_KEY'], algorithm='HS256')
+  return jwt_token.decode('utf-8')

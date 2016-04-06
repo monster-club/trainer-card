@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 from util.insert import insert_object
+from util.authorize import sign_token
 from model import Token
 
 
@@ -41,6 +42,7 @@ class User:
     new_user = self.find(created.inserted_id)
     self.token.update({'used': True}, token['_id'])
     new_user['goodies'] = token['goodies']
+    new_user['token'] = sign_token(new_user['user_name'], new_user['level'])
     return new_user
 
   def update(self, content, user_id, is_dev = False):
