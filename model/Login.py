@@ -1,6 +1,7 @@
 from model import User
 from jwt import encode
 from os import environ
+from util.authorize import sign_token
 
 
 class Login:
@@ -16,12 +17,7 @@ class Login:
       if as_a is not None:
         if user['level'] != as_a:
           return False
-      token = {
-        'user_name': user['user_name'],
-        'level': user['level']
-      }
-      jwt_token = encode(token, environ['JWT_KEY'], algorithm='HS256')
-      user['token'] = jwt_token.decode('utf-8')
+      user['token'] = sign_token(user['user_name'], user['level'])
       return user
     else:
       return False
