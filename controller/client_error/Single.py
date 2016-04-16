@@ -1,13 +1,13 @@
 from bson.json_util import dumps
 from falcon import HTTP_204, HTTP_404, HTTPUnauthorized
-from model import Error
+from model import ClientError
 from json import loads
 from util.authorize import authorize_as
 
 
 class Single:
   def __init__(self, database):
-    self.model = Error(database)
+    self.model = ClientError(database)
 
   def on_get(self, req, resp, error_id):
     if authorize_as(req.auth, 'developer'):
