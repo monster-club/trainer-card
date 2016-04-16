@@ -2,10 +2,10 @@ from bson.objectid import ObjectId
 from util.insert import insert_object
 
 
-class Error:
+class ClientError:
   def __init__(self, database):
-    self.collection = database['error']
-    self.create_keys = ['code', 'service', 'slug', 'error_id', 'message']
+    self.collection = database['client_error']
+    self.create_keys = ['user_id', 'app', 'message', 'browser', 'line']
     self.update_keys = ['issue', 'resolved']
 
   def all(self):

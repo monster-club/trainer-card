@@ -1,6 +1,6 @@
 from falcon import API
 from pymongo import MongoClient
-from controller import token, user, error
+from controller import token, user, error, client_error
 from util.cors import pre_cors, post_cors
 
 client = MongoClient()
@@ -14,3 +14,5 @@ api.add_route('/token/', token.Base(client.trainer_card))
 api.add_route('/token/{token_id}/', token.Single(client.trainer_card))
 api.add_route('/error/', error.Base(client.jenny))
 api.add_route('/error/{error_id}/', error.Single(client.jenny))
+api.add_route('/client_error/', client_error.Base(client.jenny))
+api.add_route('/client_error/{error_id}/', client_error.Single(client.jenny))
